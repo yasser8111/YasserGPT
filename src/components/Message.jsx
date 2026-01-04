@@ -7,11 +7,14 @@ import "../index.css";
 const CopyButton = ({ text }) => {
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = () => {
-    const plainText = String(text);
-    navigator.clipboard.writeText(plainText);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy: ", err);
+    }
   };
 
   return (
@@ -30,14 +33,12 @@ const Message = ({ role, content, isLoading }) => {
 
   if (isLoading) {
     return (
-      <div className="ai self-end p-6 flex gap-1.5 items-center">
-        {[0, 0.2, 0.4].map((delay, i) => (
-          <span
-            key={i}
-            className="w-[5px] h-[5px] bg-light-900 dark:bg-dark-900 rounded-full animate-[aiTyping_1.4s_infinite_ease-in-out]"
-            style={{ animationDelay: `${delay}s` }}
-          ></span>
-        ))}
+      <div className="ai self-end flex items-center">
+        <img
+          className="h-5 w-5 animate-loading"
+          src="/src/assets/logo.png"
+          alt="Logo"
+        />
       </div>
     );
   }
@@ -53,7 +54,10 @@ const Message = ({ role, content, isLoading }) => {
 
     code: ({ node, inline, className, children, ...props }) => {
       const match = /language-(\w+)/.exec(className || "");
-      const rawCode = String(children).replace(/\n$/, "");
+      
+      const rawCode = Array.isArray(children)
+        ? children.map(child => (typeof child === 'object' ? child.props.children : child)).join("")
+        : String(children).replace(/\n$/, "");
 
       if (inline) {
         return (
@@ -81,7 +85,9 @@ const Message = ({ role, content, isLoading }) => {
       );
     },
   };
+
   const preprocessContent = (text) => {
+    if (typeof text !== "string") return text;
     return text
       .replace(/<pre><code.*?>/g, "```javascript\n")
       .replace(/<\/code><\/pre>/g, "\n```")

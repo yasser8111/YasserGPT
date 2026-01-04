@@ -12,6 +12,8 @@
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.18",
     "dotenv": "^17.2.3",
+    "firebase": "^12.7.0",
+    "git": "^0.1.5",
     "highlight.js": "^11.11.1",
     "lru-cache": "^11.2.4",
     "lucide-react": "^0.562.0",

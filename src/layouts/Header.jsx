@@ -1,34 +1,22 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Header = ({ onToggleTheme, isDarkMode }) => {
+const Header = ({ onToggleSidebar, isSidebarOpen }) => {
   return (
-    <header className="fixed top-0 left-0 w-full z-[1000] py-[15px] bg-light-200 dark:bg-dark-100">
-      <div className="mx-auto flex justify-between items-center px-3">
-        <div className="flex gap-2">
-          <Link
-            to="/info"
-            className="w-10 h-10 flex items-center justify-center cursor-pointer  group hover:bg-light-200 dark:hover:bg-dark-300 rounded-full"
-          >
-            <i className="fa-solid fa-info text-light-600 dark:text-dark-600 group-hover:text-black dark:group-hover:text-white text-lg"></i>
-          </Link>
+    <header className="w-full py-3 bg-light-200 dark:bg-dark-100 z-[100]">
+      <div className="flex justify-between items-center px-4">
+        <button
+          onClick={onToggleSidebar}
+          className="w-10 h-10 flex items-center justify-center cursor-pointer rounded-full hover:bg-light-300 dark:hover:bg-dark-300 text-light-600 dark:text-light-400 transition-all"
+        >
+          <i className={`fa-solid ${isSidebarOpen ? "fa-xmark" : "fa-bars"} text-lg`}></i>
+        </button>
 
-          <button
-            onClick={onToggleTheme}
-            className="w-10 h-10 flex items-center justify-center cursor-pointer group hover:bg-light-200 dark:hover:bg-dark-300 rounded-full"
-          >
-            <i
-              className={`fa-solid ${
-                isDarkMode ? "fa-sun" : "fa-moon"
-              } text-light-600 dark:text-dark-600 group-hover:text-black dark:group-hover:text-white text-lg`}
-            ></i>
-          </button>
-        </div>
-
-        <Link to="/" className="no-underline">
-          <h3 className="font-logo text-lg font-bold text-light-600 dark:text-dark-600 hover:text-black dark:hover:text-white m-0">
-            HUAI
+        <Link to="/" className="no-underline flex items-center gap-2">
+          <h3 className="text-lg font-bold text-black dark:text-white m-0">
+            Yasser<strong>GPT</strong>
           </h3>
+          <img className="h-8 w-8 object-contain" src="/src/assets/logo.png" alt="Logo" />
         </Link>
       </div>
     </header>
