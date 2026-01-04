@@ -260,6 +260,9 @@ const Sidebar = ({ isOpen, setIsOpen, isDarkMode, onToggleTheme }) => {
                     user.photoURL ||
                     `https://ui-avatars.com/api/?name=${user.email}`
                   }
+                  onError={(e) => {
+                    e.target.src = "/img/Avatar.png";
+                  }}
                   className="w-9 h-9 rounded-full bg-gray-300 object-cover"
                   alt="Avatar"
                 />

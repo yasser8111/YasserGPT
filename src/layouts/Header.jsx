@@ -16,7 +16,7 @@ const Header = ({ onToggleSidebar, isSidebarOpen }) => {
           <h3 className="text-lg font-bold text-black dark:text-white m-0">
             Yasser<strong>GPT</strong>
           </h3>
-          <img className="h-8 w-8 object-contain" src="/src/assets/logo.png" alt="Logo" />
+          <img className="h-8 w-8 object-contain" src="/img/logo.png" alt="Logo" />
         </Link>
       </div>
     </header>

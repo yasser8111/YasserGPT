@@ -36,7 +36,7 @@ const Message = ({ role, content, isLoading }) => {
       <div className="ai self-end flex items-center">
         <img
           className="h-5 w-5 animate-loading"
-          src="/src/assets/logo.png"
+          src="/img/logo.png"
           alt="Logo"
         />
       </div>

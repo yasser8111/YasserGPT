@@ -16,7 +16,7 @@ const MinimalModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[120] flex items-center justify-center p-6">
+    <div className="fixed inset-0 z-130 flex items-center justify-center p-6">
       <div
         className="absolute inset-0 bg-white/60 dark:bg-dark-100/60 backdrop-blur-[2px]"
         onClick={onClose}
