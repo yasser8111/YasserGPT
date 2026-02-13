@@ -6,12 +6,13 @@ import Sidebar from "./layouts/Sidebar";
 import ChatPage from "./pages/ChatPage";
 import InfoPage from "./pages/InfoPage";
 import LoginPage from "./pages/LoginPage";
-import SettingsPage from "./pages/SettingsPage"; // تأكد من إنشاء هذا الملف في مجلد pages
+import SettingsPage from "./pages/SettingsPage";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import "highlight.js/styles/github-dark.css";
 
 const ProtectedRoute = ({ children }) => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  if (loading) return null; // Wait for auth state to resolve
   return user ? children : <Navigate to="/login" />;
 };
 
@@ -54,7 +55,7 @@ function App() {
           <main className="flex-1 overflow-hidden relative">
             <Routes>
               <Route path="/login" element={<LoginPage />} />
-              
+
               <Route
                 path="/chat/:chatId?"
                 element={
@@ -68,15 +69,16 @@ function App() {
                 path="/settings"
                 element={
                   <ProtectedRoute>
-                    <SettingsPage 
-                      isDarkMode={isDarkMode} 
-                      onToggleTheme={toggleTheme} 
+                    <SettingsPage
+                      isDarkMode={isDarkMode}
+                      onToggleTheme={toggleTheme}
                     />
                   </ProtectedRoute>
                 }
               />
 
               <Route path="/info" element={<InfoPage />} />
+              <Route path="/" element={<Navigate to="/chat" />} />
               <Route path="*" element={<Navigate to="/chat" />} />
             </Routes>
           </main>
