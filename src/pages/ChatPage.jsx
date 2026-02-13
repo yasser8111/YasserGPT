@@ -97,7 +97,11 @@ const ChatPage = () => {
     setIsLoading(true);
 
     try {
-      const response = await askAI(null, text, { model: selectedModel });
+      const personality = localStorage.getItem("ai_personality") || "default";
+      const response = await askAI(null, text, {
+        model: selectedModel,
+        personality: personality,
+      });
       const aiMsg = { role: "ai", content: response };
       setMessages((prev) => [...prev, aiMsg]);
     } catch (error) {

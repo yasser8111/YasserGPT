@@ -9,6 +9,7 @@ import {
   MODELS,
   FAST_LIMIT,
   AI_PROFILE,
+  getSystemPrompt,
 } from "../constants/config.js";
 
 // ==========================================
@@ -22,7 +23,7 @@ function cleanAIResponse(text) {
   return text
     .replace(
       /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\uff66-\uff9f\u0900-\u097f]/g,
-      ""
+      "",
     )
     .trim();
 }
@@ -53,9 +54,10 @@ const memoryCache = new LRUCache({
  * @param {string} sessionId - The unique identifier for the user's session.
  * @returns {Array<Object>} The chat history array, including the system message.
  */
-function getMemory(sessionId) {
+function getMemory(sessionId, personalityId = "default") {
   if (!memoryCache.has(sessionId)) {
-    memoryCache.set(sessionId, [{ role: "system", content: AI_PROFILE }]);
+    const systemContent = getSystemPrompt(personalityId);
+    memoryCache.set(sessionId, [{ role: "system", content: systemContent }]);
   }
   return memoryCache.get(sessionId);
 }
@@ -127,7 +129,8 @@ export async function askAI(sessionId, prompt, options = {}) {
   const cleanPrompt = sanitizePrompt(trimmedPrompt);
   if (!cleanPrompt) throw new Error("Prompt is empty after sanitization");
 
-  let memory = getMemory(sessionId);
+  const personalityId = options.personality || "default";
+  let memory = getMemory(sessionId, personalityId);
   memory = addMessage(memory, "user", cleanPrompt);
   memoryCache.set(sessionId, memory);
 
@@ -146,7 +149,7 @@ export async function askAI(sessionId, prompt, options = {}) {
     const rawResponse = await requestHFRouter(
       memory,
       selectedModelId,
-      temperature
+      temperature,
     );
     const finalResponse = cleanAIResponse(rawResponse);
 
@@ -195,7 +198,7 @@ async function requestHFRouter(messages, model, temperature, retries = 2) {
           temperature,
         }),
         signal: controller.signal,
-      }
+      },
     );
 
     clearTimeout(timer);
