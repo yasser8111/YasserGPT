@@ -37,7 +37,7 @@
 //     const userMsg = { role: "user", content: text };
 //     setMessages((prev) => [...prev, userMsg]);
 //     await saveMessage(user.uid, currentChatId, userMsg);
-    
+
 //     setIsLoading(true);
 
 //     try {
@@ -79,11 +79,13 @@ const ChatPage = () => {
   const navigate = useNavigate();
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  
-  const isServiceActive = false; 
+
+  const isServiceActive = true;
 
   useEffect(() => {
-    setMessages([{ role: "ai", content: "مرحباً! أنا YasserGPT، ابدأ محادثة جديدة الآن." }]);
+    setMessages([
+      { role: "ai", content: "مرحباً! أنا YasserGPT، ابدأ محادثة جديدة الآن." },
+    ]);
   }, [chatId, user]);
 
   const handleSendMessage = async (text, selectedModel) => {
@@ -91,7 +93,7 @@ const ChatPage = () => {
 
     const userMsg = { role: "user", content: text };
     setMessages((prev) => [...prev, userMsg]);
-    
+
     setIsLoading(true);
 
     try {
@@ -99,7 +101,10 @@ const ChatPage = () => {
       const aiMsg = { role: "ai", content: response };
       setMessages((prev) => [...prev, aiMsg]);
     } catch (error) {
-      setMessages((prev) => [...prev, { role: "ai", content: "حدث خطأ في الاتصال." }]);
+      setMessages((prev) => [
+        ...prev,
+        { role: "ai", content: "حدث خطأ في الاتصال." },
+      ]);
     } finally {
       setIsLoading(false);
     }
@@ -111,9 +116,9 @@ const ChatPage = () => {
         <ChatContainer messages={messages} isLoading={isLoading} />
       </div>
       <div className="w-full bg-gradient-to-t from-light-200 dark:from-dark-100 via-light-200 dark:via-dark-100 to-transparent">
-        <InputArea 
-          onSend={handleSendMessage} 
-          disabled={isLoading || !isServiceActive} 
+        <InputArea
+          onSend={handleSendMessage}
+          disabled={isLoading || !isServiceActive}
         />
       </div>
     </div>

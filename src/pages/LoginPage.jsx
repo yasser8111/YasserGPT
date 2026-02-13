@@ -18,7 +18,8 @@ const LoginPage = () => {
       await signInWithGoogle();
       navigate("/chat");
     } catch (err) {
-      setError("فشل تسجيل الدخول عبر جوجل");
+      console.error("Firebase Login Error:", err);
+      setError(`فشل تسجيل الدخول: ${err.code || "خطأ غير معروف"}`);
     }
   };
 
