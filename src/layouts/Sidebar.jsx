@@ -42,7 +42,7 @@ const Sidebar = ({ isOpen, setIsOpen, isDarkMode, onToggleTheme }) => {
 
     const q = query(
       collection(db, "users", user.uid, "conversations"),
-      orderBy("createdAt", "desc")
+      orderBy("createdAt", "desc"),
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -58,6 +58,20 @@ const Sidebar = ({ isOpen, setIsOpen, isDarkMode, onToggleTheme }) => {
 
   const handleNewChat = async () => {
     if (!user) return;
+    if (conversations.length >= 10) {
+      setModal({
+        isOpen: true,
+        type: "alert",
+        title: "الحد الأقصى للمحادثات",
+        description:
+          "لقد وصلت إلى الحد الأقصى (10 محادثات). يرجى حذف محادثة قديمة للتمكن من إنشاء محادثة جديدة.",
+        confirmText: "حسناً",
+        isDanger: false,
+        action: () => setModal((prev) => ({ ...prev, isOpen: false })),
+      });
+      return;
+    }
+
     try {
       const convRef = collection(db, "users", user.uid, "conversations");
       const newDoc = await addDoc(convRef, {
@@ -153,7 +167,7 @@ const Sidebar = ({ isOpen, setIsOpen, isDarkMode, onToggleTheme }) => {
         isDanger={modal.isDanger}
         value={modal.inputValue}
         onChange={(val) => setModal({ ...modal, inputValue: val })}
-        onConfirm={() => modal.action(modal.inputValue)}
+        onConfirm={() => modal.action && modal.action(modal.inputValue)}
       />
 
       {isOpen && (
@@ -168,7 +182,7 @@ const Sidebar = ({ isOpen, setIsOpen, isDarkMode, onToggleTheme }) => {
           isOpen
             ? "w-72 opacity-100 translate-x-0"
             : "w-0 opacity-0 -translate-x-full lg:translate-x-0"
-        } fixed lg:relative z-120 flex-shrink-0 transition-all duration-300 ease-in-out bg-white dark:bg-dark-50 h-full flex flex-col overflow-hidden shadow-xl lg:shadow-none`}
+        } fixed lg:relative z-120 shrink-0 transition-all duration-300 ease-in-out bg-white dark:bg-dark-50 h-full flex flex-col overflow-hidden shadow-xl lg:shadow-none`}
       >
         <div className="p-4 flex flex-col h-full min-w-[18rem]">
           <button

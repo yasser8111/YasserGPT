@@ -1,70 +1,125 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const MinimalModal = ({
   isOpen,
   onClose,
   title,
-  description, 
-  type = "confirm", // "confirm" , "input"
-  value, 
+  description,
+  type = "confirm", // "confirm" , "input", "alert"
+  value,
   onChange,
   onConfirm,
   confirmText,
   isDanger,
   placeholder = "أدخل القيمة...",
 }) => {
-  if (!isOpen) return null;
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setIsVisible(true);
+    } else {
+      setTimeout(() => setIsVisible(false), 200); // Wait for transition
+    }
+  }, [isOpen]);
+
+  if (!isOpen && !isVisible) return null;
 
   return (
-    <div className="fixed inset-0 z-130 flex items-center justify-center p-6">
+    <div
+      className={`fixed inset-0 z-150 flex items-center justify-center p-4 sm:p-6 transition-all duration-300 ease-out ${
+        isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+      }`}
+    >
+      {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-white/60 dark:bg-dark-100/60 backdrop-blur-[2px]"
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
 
-      <div className="relative w-full max-w-sm space-y-8 text-center animate-in zoom-in-95 duration-300">
-        <div className="space-y-2">
-          <h2 className="text-lg font-medium dark:text-white tracking-tight">
+      {/* Modal Card */}
+      <div
+        className={`relative w-full max-w-sm sm:max-w-md bg-white dark:bg-dark-200 border border-gray-100 dark:border-dark-300 rounded-2xl shadow-2xl overflow-hidden text-center transition-all duration-300 ease-out transform ${
+          isOpen ? "scale-100 translate-y-0" : "scale-95 translate-y-4"
+        }`}
+      >
+        <div className="p-6 sm:p-8 space-y-4">
+          {/* Icon (Optional but nice for UX) */}
+          <div className="flex justify-center mb-2">
+            {type === "alert" ? (
+              <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/40 flex items-center justify-center text-red-500">
+                <i className="fa-solid fa-circle-exclamation text-xl"></i>
+              </div>
+            ) : isDanger ? (
+              <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/40 flex items-center justify-center text-red-500">
+                <i className="fa-solid fa-trash-can text-xl"></i>
+              </div>
+            ) : type === "input" ? (
+              <div className="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center text-brand">
+                <i className="fa-solid fa-pen-to-square text-xl"></i>
+              </div>
+            ) : (
+              <div className="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center text-brand">
+                <i className="fa-solid fa-circle-info text-xl"></i>
+              </div>
+            )}
+          </div>
+
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white tracking-tight">
             {title}
           </h2>
-          
+
           {description && (
-            <div className="text-sm text-gray-400 font-light px-4">
+            <p className="text-sm text-gray-500 dark:text-gray-400 font-medium px-2 leading-relaxed">
               {description}
-            </div>
+            </p>
           )}
 
           {type === "input" && (
-            <div className="px-4 pt-4">
+            <div className="pt-2">
               <input
                 autoFocus
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder={placeholder}
-                className="w-full bg-transparent border-b border-gray-100 dark:border-dark-300 py-2 text-center outline-none focus:border-brand transition-colors dark:text-white text-sm"
+                className="w-full bg-light-100 dark:bg-dark-300 border border-gray-200 dark:border-dark-400 rounded-xl px-4 py-3 text-center outline-none focus:ring-2 focus:ring-brand/50 focus:border-brand transition-all dark:text-white text-sm"
               />
             </div>
           )}
         </div>
 
-        <div className="flex flex-col gap-3">
-          {onConfirm && (
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row border-t border-gray-100 dark:border-dark-300 bg-gray-50 dark:bg-dark-300/30">
+          {type === "alert" ? (
             <button
-              onClick={onConfirm}
-              className={`cursor-pointer text-[10px] uppercase tracking-[3px] font-bold py-4 rounded-full transition-all active:scale-95 ${
-                isDanger ? "bg-red-500 text-white" : "bg-brand text-white"
-              }`}
+              onClick={onConfirm || onClose}
+              className="w-full py-4 text-sm font-semibold text-brand hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
             >
-              {confirmText || "تأكيد"}
+              {confirmText || "حسناً"}
             </button>
-          )}
+          ) : (
+            <>
+              {onConfirm && (
+                <button
+                  onClick={onConfirm}
+                  className={`flex-1 py-4 text-sm font-semibold border-b sm:border-b-0 sm:border-l border-gray-100 dark:border-dark-300 transition-colors ${
+                    isDanger
+                      ? "text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                      : "text-brand hover:bg-brand/5 dark:hover:bg-brand/10"
+                  }`}
+                >
+                  {confirmText || "تأكيد"}
+                </button>
+              )}
 
-          <button
-            onClick={onClose}
-            className="cursor-pointer text-[10px] uppercase tracking-[3px] text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors py-2"
-          >
-            إلغاء
-          </button>
+              <button
+                onClick={onClose}
+                className="flex-1 py-4 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+              >
+                إلغاء
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>
