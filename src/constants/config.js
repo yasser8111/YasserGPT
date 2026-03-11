@@ -20,8 +20,8 @@ export const MODELS = {
     displayName: "Auto",
   },
   FAST: {
-    id: "meta-llama/Llama-3.2-3B-Instruct",
-    displayName: "Llama 3.2",
+    id: "Qwen/Qwen2.5-7B-Instruct",
+    displayName: "Qwen 2.5 (7B)",
   },
   SMART: {
     id: "deepseek-ai/DeepSeek-V3",
